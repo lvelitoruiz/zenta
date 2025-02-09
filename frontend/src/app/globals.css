@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 17, 24, 39;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+}
+
+/* DatePicker dark theme */
+.react-datepicker {
+  @apply bg-gray-800 border-gray-700 text-white !important;
+}
+
+.react-datepicker__header {
+  @apply bg-gray-900 border-gray-700 !important;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  @apply text-white !important;
+}
+
+.react-datepicker__day {
+  @apply text-white hover:bg-gray-700 !important;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--in-range {
+  @apply bg-blue-600 hover:bg-blue-700 text-white !important;
+}
+
+.react-datepicker__day--keyboard-selected {
+  @apply bg-blue-600/50 !important;
+}
+
+.react-datepicker__day--disabled {
+  @apply text-gray-500 hover:bg-transparent !important;
+}
+
+.react-datepicker__navigation-icon::before {
+  @apply border-gray-400 !important;
+}
+
+.react-datepicker__triangle::before,
+.react-datepicker__triangle::after {
+  @apply border-gray-700 !important;
+} 

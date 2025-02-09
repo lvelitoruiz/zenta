@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id        Int       @id @default(autoincrement())
+  name      String
+  products  Product[]
+  metrics   Metric[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@map("organizations")
+}
+
+model Product {
+  id             Int          @id @default(autoincrement())
+  organizationId Int          @map("organization_id")
+  name          String
+  price         Decimal      @db.Decimal(10,2)
+  stock         Int
+  organization  Organization @relation(fields: [organizationId], references: [id])
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  @@map("products")
+}
+
+model Metric {
+  id             Int          @id @default(autoincrement())
+  organizationId Int          @map("organization_id")
+  totalRevenue   Decimal?     @map("total_revenue") @db.Decimal(15,2)
+  totalProducts  Int?         @map("total_products")
+  lowStockItems  Int?         @map("low_stock_items")
+  date           DateTime     @db.Date
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now()) @map("created_at")
+
+  @@map("metrics")
+}
