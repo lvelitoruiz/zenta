@@ -25,8 +25,19 @@ export interface Metric {
   createdAt: Date;
 }
 
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 export interface IRepository {
-  getProducts(organizationId: number): Promise<Product[]>;
+  getProducts(
+    organizationId: number,
+    page?: number,
+    limit?: number,
+  ): Promise<PaginatedResponse<Product>>;
   getProduct(id: number): Promise<Product | null>;
   addProduct(
     product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>,

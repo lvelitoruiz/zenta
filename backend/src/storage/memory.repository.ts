@@ -4,19 +4,32 @@ import {
   Product,
   Organization,
   Metric,
+  PaginatedResponse,
 } from '../common/interfaces/repository.interface';
 
 @Injectable()
 export class MemoryRepository implements IRepository {
-  private products: Product[] = [];
-  private organizations: Organization[] = [];
-  private metrics = new Map<number, Metric[]>();
+  private static instance: MemoryRepository;
+  public organizations: Organization[] = [];
+  public products: Product[] = [];
+  public metrics: Map<number, Metric[]> = new Map();
+
+  constructor() {
+    if (!MemoryRepository.instance) {
+      MemoryRepository.instance = this;
+    }
+    return MemoryRepository.instance;
+  }
 
   async seedData(
     organizations: Organization[],
     products: Product[],
     metrics: Metric[],
   ): Promise<void> {
+    console.log('Seeding data...'); // Debug
+    console.log('Organizations:', organizations); // Debug
+    console.log('Products:', products); // Debug
+
     this.organizations = organizations;
     this.products = products;
     metrics.forEach((metric) => {
@@ -24,14 +37,36 @@ export class MemoryRepository implements IRepository {
       orgMetrics.push(metric);
       this.metrics.set(metric.organizationId, orgMetrics);
     });
+
+    console.log('After seed - Products:', this.products); // Debug
     await Promise.resolve();
   }
 
-  async getProducts(organizationId: number) {
-    const products = this.products.filter(
+  async getProducts(
+    organizationId: number,
+    page = 1,
+    limit = 10,
+  ): Promise<PaginatedResponse<Product>> {
+    console.log('Memory Repository - All products:', this.products); // Debug
+    console.log('Memory Repository - Searching for org:', organizationId); // Debug
+
+    const allProducts = this.products.filter(
       (p) => p.organizationId === organizationId,
     );
-    return Promise.resolve(products);
+    console.log('Memory Repository - Filtered products:', allProducts); // Debug
+
+    const start = (page - 1) * limit;
+    const end = start + limit;
+
+    const result = {
+      items: allProducts.slice(start, end),
+      total: allProducts.length,
+      page,
+      limit,
+    };
+
+    console.log('Memory Repository - Final result:', result); // Debug
+    return await Promise.resolve(result);
   }
 
   async getProduct(id: number): Promise<any> {

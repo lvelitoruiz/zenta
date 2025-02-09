@@ -21,24 +21,19 @@ import { MetricsModule } from './metrics/metrics.module';
     MemoryRepository,
     PrismaRepository,
     PrismaService,
+    MemorySeedService,
     {
       provide: 'REPOSITORY',
-      useClass:
-        process.env.STORAGE_TYPE === 'prisma'
-          ? PrismaRepository
-          : MemoryRepository,
+      useClass: MemoryRepository,
     },
-    ...(process.env.STORAGE_TYPE !== 'prisma' ? [MemorySeedService] : []),
   ],
   exports: ['REPOSITORY'],
 })
 export class AppModule implements OnModuleInit {
-  constructor(private readonly memorySeedService?: MemorySeedService) {}
+  constructor(private readonly memorySeedService: MemorySeedService) {}
 
   async onModuleInit() {
-    if (process.env.STORAGE_TYPE !== 'prisma' && this.memorySeedService) {
-      await this.memorySeedService.seed();
-      console.log('Memory storage seeded with initial data');
-    }
+    await this.memorySeedService.seed();
+    console.log('Memory storage seeded with initial data');
   }
 }

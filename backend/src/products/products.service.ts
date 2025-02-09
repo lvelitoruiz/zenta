@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
@@ -11,29 +12,25 @@ import {
 } from './dto/product.dto';
 import { Product } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
+import { IRepository } from '../common/interfaces/repository.interface';
 
 @Injectable()
 export class ProductsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject('REPOSITORY')
+    private readonly repository: IRepository,
+  ) {}
 
-  async findAll(organizationId: number): Promise<ProductDto[]> {
-    try {
-      const products = (await this.prisma.product.findMany({
-        where: { organizationId },
-      })) as Product[];
-
-      return products.map((product) => ({
-        id: product.id,
-        name: product.name,
-        price: Number(product.price),
-        stock: product.stock,
-        organizationId: product.organizationId,
-        createdAt: product.createdAt,
-        updatedAt: product.updatedAt,
-      }));
-    } catch (error) {
-      throw new BadRequestException('Error al obtener productos: ' + error);
-    }
+  async findAll(organizationId: number, page = 1, limit = 10) {
+    console.log('Service - Finding products for org:', organizationId); // Debug
+    const result = await this.repository.getProducts(
+      organizationId,
+      page,
+      limit,
+    );
+    console.log('Service - Found products:', result); // Debug
+    return result;
   }
 
   async findOne(id: number): Promise<ProductDto> {

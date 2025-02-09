@@ -7,7 +7,7 @@ import { RootState } from '@/store/store';
 import { InventoryPanel } from '../Dashboard/InventoryPanel';
 import { CategoryPanel } from '../Dashboard/CategoryPanel';
 
-export const Header = () => {
+export const MetricsPanel = () => {
   const { data: metricsData } = useAppSelector((state: RootState) => state.metrics);
 
   console.log('metricsData: ',metricsData);

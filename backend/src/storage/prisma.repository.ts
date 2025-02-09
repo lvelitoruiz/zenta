@@ -5,6 +5,7 @@ import {
   Product,
   Organization,
   Metric,
+  PaginatedResponse,
 } from '../common/interfaces/repository.interface';
 import {
   Product as PrismaProduct,
@@ -16,22 +17,38 @@ import {
 export class PrismaRepository implements IRepository {
   constructor(private prisma: PrismaService) {}
 
-  async getProducts(organizationId: number): Promise<Product[]> {
-    const products: PrismaProduct[] = await this.prisma.product.findMany({
-      where: { organizationId },
-    });
+  async getProducts(
+    organizationId: number,
+    page = 1,
+    limit = 10,
+  ): Promise<PaginatedResponse<Product>> {
+    const skip = (page - 1) * limit;
 
-    return products.map(
-      (p: PrismaProduct): Product => ({
-        id: p.id,
-        name: p.name,
-        price: Number(p.price),
-        stock: p.stock,
-        organizationId: p.organizationId,
-        createdAt: p.createdAt,
-        updatedAt: p.updatedAt,
+    const [products, total] = await Promise.all([
+      this.prisma.product.findMany({
+        where: { organizationId },
+        skip,
+        take: limit,
       }),
-    );
+      this.prisma.product.count({ where: { organizationId } }),
+    ]);
+
+    return {
+      items: products.map(
+        (p): Product => ({
+          id: p.id,
+          name: p.name,
+          price: Number(p.price),
+          stock: p.stock,
+          organizationId: p.organizationId,
+          createdAt: p.createdAt,
+          updatedAt: p.updatedAt,
+        }),
+      ),
+      total,
+      page,
+      limit,
+    };
   }
 
   async getProduct(id: number): Promise<Product | null> {

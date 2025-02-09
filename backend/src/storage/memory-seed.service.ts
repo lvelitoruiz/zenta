@@ -8,9 +8,11 @@ import {
 
 @Injectable()
 export class MemorySeedService {
-  constructor(private repository: MemoryRepository) {}
+  constructor(public repository: MemoryRepository) {}
 
   async seed() {
+    console.log('Starting seed...');
+
     const organizations: Organization[] = [
       {
         id: 1,
@@ -26,53 +28,17 @@ export class MemorySeedService {
       },
     ];
 
-    const products: Product[] = [
-      {
-        id: 1,
-        name: 'MacBook Pro',
-        price: 1299.99,
-        stock: 50,
-        organizationId: 1,
+    const products: Product[] = organizations.flatMap((org) =>
+      Array.from({ length: 100 }, (_, i) => ({
+        id: org.id * 1000 + i + 1,
+        name: `${org.name} Product ${i + 1}`,
+        price: Math.round(Math.random() * 1000 * 100) / 100,
+        stock: Math.floor(Math.random() * 100),
+        organizationId: org.id,
         createdAt: new Date(),
         updatedAt: new Date(),
-      },
-      {
-        id: 2,
-        name: 'iPhone 15',
-        price: 999.99,
-        stock: 100,
-        organizationId: 1,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: 3,
-        name: 'iPad Air',
-        price: 599.99,
-        stock: 75,
-        organizationId: 1,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: 4,
-        name: 'Samsung S24',
-        price: 899.99,
-        stock: 80,
-        organizationId: 2,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: 5,
-        name: 'Samsung Tab S9',
-        price: 649.99,
-        stock: 45,
-        organizationId: 2,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ];
+      })),
+    );
 
     const metrics: Metric[] = organizations.flatMap((org) => {
       return Array.from({ length: 30 }).map((_, index) => {
@@ -81,7 +47,7 @@ export class MemorySeedService {
         const orgProducts = products.filter((p) => p.organizationId === org.id);
 
         return {
-          id: index + 1,
+          id: org.id * 1000 + index + 1,
           organizationId: org.id,
           totalRevenue: orgProducts.reduce(
             (sum, p) => sum + p.price * p.stock,
@@ -96,5 +62,10 @@ export class MemorySeedService {
     });
 
     await this.repository.seedData(organizations, products, metrics);
+    console.log('Seed completed');
+  }
+
+  getRepository() {
+    return this.repository;
   }
 }

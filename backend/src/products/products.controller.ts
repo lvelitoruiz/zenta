@@ -8,6 +8,7 @@ import {
   Param,
   ParseIntPipe,
   Query,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import {
@@ -31,13 +32,19 @@ export class ProductsController {
   @Get()
   @ApiOperation({ summary: 'Obtener todos los productos de una organización' })
   @ApiQuery({ name: 'organizationId', type: Number })
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'limit', type: Number, required: false })
   @ApiResponse({
     status: 200,
-    description: 'Lista de productos',
+    description: 'Lista paginada de productos',
     type: [ProductDto],
   })
-  findAll(@Query('organizationId', ParseIntPipe) organizationId: number) {
-    return this.productsService.findAll(organizationId);
+  findAll(
+    @Query('organizationId', ParseIntPipe) organizationId: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ) {
+    return this.productsService.findAll(organizationId, page, limit);
   }
 
   @Get(':id')
