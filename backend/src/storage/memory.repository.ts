@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   IRepository,
   Product,
@@ -26,10 +26,6 @@ export class MemoryRepository implements IRepository {
     products: Product[],
     metrics: Metric[],
   ): Promise<void> {
-    console.log('Seeding data...'); // Debug
-    console.log('Organizations:', organizations); // Debug
-    console.log('Products:', products); // Debug
-
     this.organizations = organizations;
     this.products = products;
     metrics.forEach((metric) => {
@@ -38,7 +34,6 @@ export class MemoryRepository implements IRepository {
       this.metrics.set(metric.organizationId, orgMetrics);
     });
 
-    console.log('After seed - Products:', this.products); // Debug
     await Promise.resolve();
   }
 
@@ -47,13 +42,9 @@ export class MemoryRepository implements IRepository {
     page = 1,
     limit = 10,
   ): Promise<PaginatedResponse<Product>> {
-    console.log('Memory Repository - All products:', this.products); // Debug
-    console.log('Memory Repository - Searching for org:', organizationId); // Debug
-
     const allProducts = this.products.filter(
       (p) => p.organizationId === organizationId,
     );
-    console.log('Memory Repository - Filtered products:', allProducts); // Debug
 
     const start = (page - 1) * limit;
     const end = start + limit;
@@ -65,7 +56,6 @@ export class MemoryRepository implements IRepository {
       limit,
     };
 
-    console.log('Memory Repository - Final result:', result); // Debug
     return await Promise.resolve(result);
   }
 
@@ -109,11 +99,13 @@ export class MemoryRepository implements IRepository {
 
   async deleteProduct(id: number): Promise<boolean> {
     const index = this.products.findIndex((p) => p.id === id);
-    if (index !== -1) {
-      this.products.splice(index, 1);
-      return true;
+
+    if (index === -1) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
     }
-    return Promise.resolve(false);
+
+    this.products.splice(index, 1);
+    return Promise.resolve(true);
   }
 
   async getOrganizations(): Promise<Organization[]> {

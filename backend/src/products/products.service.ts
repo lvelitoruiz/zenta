@@ -100,58 +100,11 @@ export class ProductsService {
     }
   }
 
-  async update(id: number, data: UpdateProductDto): Promise<ProductDto> {
-    try {
-      await this.findOne(id);
-
-      if (data.price !== undefined && data.price < 0) {
-        throw new BadRequestException('El precio no puede ser negativo');
-      }
-
-      if (data.stock !== undefined && data.stock < 0) {
-        throw new BadRequestException('El stock no puede ser negativo');
-      }
-
-      const product = (await this.prisma.product.update({
-        where: { id },
-        data: {
-          ...data,
-          price: data.price ? new Decimal(data.price) : undefined,
-        },
-      })) as Product;
-
-      return {
-        id: product.id,
-        name: product.name,
-        price: Number(product.price),
-        stock: product.stock,
-        organizationId: product.organizationId,
-        createdAt: product.createdAt,
-        updatedAt: product.updatedAt,
-      };
-    } catch (error) {
-      if (
-        error instanceof NotFoundException ||
-        error instanceof BadRequestException
-      ) {
-        throw error;
-      }
-      throw new BadRequestException('Error al actualizar el producto');
-    }
+  async update(id: number, updateProductDto: UpdateProductDto) {
+    return this.repository.updateProduct(id, updateProductDto);
   }
 
-  async remove(id: number): Promise<void> {
-    try {
-      await this.findOne(id);
-
-      await this.prisma.product.delete({
-        where: { id },
-      });
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new BadRequestException('Error al eliminar el producto');
-    }
+  async remove(id: number) {
+    return this.repository.deleteProduct(id);
   }
 }

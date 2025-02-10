@@ -72,12 +72,10 @@ export class ProductsController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Actualizar un producto existente' })
-  @ApiParam({ name: 'id', type: Number })
+  @ApiOperation({ summary: 'Actualizar un producto' })
   @ApiResponse({
     status: 200,
-    description: 'Producto actualizado',
-    type: ProductDto,
+    description: 'Producto actualizado exitosamente',
   })
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -88,8 +86,10 @@ export class ProductsController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar un producto' })
-  @ApiParam({ name: 'id', type: Number })
-  @ApiResponse({ status: 200, description: 'Producto eliminado' })
+  @ApiResponse({
+    status: 200,
+    description: 'Producto eliminado exitosamente',
+  })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.remove(id);
   }

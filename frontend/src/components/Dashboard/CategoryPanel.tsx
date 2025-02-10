@@ -7,16 +7,14 @@ import {
   faPercentage,
   faStar
 } from '@fortawesome/free-solid-svg-icons';
-import { CategoryMetrics } from '@/types/metrics';
+import { useMetrics } from '@/hooks/useMetrics';
 
 export const CategoryPanel = () => {
-  // Esto vendrá del estado de Redux
-  const metrics: CategoryMetrics = {
-    topCategory: 'Electrónicos',
-    categoryGrowth: 23.5,
-    categoriesActive: 8,
-    avgCategoryMargin: 32.4
-  };
+  const { overview, loading } = useMetrics();
+
+  if (loading || !overview) {
+    return <div className="bg-gray-800 rounded-lg p-4 animate-pulse h-[160px]" />;
+  }
 
   return (
     <div className="bg-gray-800 rounded-lg p-4 text-white">
@@ -28,14 +26,14 @@ export const CategoryPanel = () => {
               <Icon icon={faStar} className="text-yellow-400" />
               Top
             </span>
-            <span>{metrics.topCategory}</span>
+            <span>{overview.topCategory || 'Sin datos'}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="flex items-center gap-2">
               <Icon icon={faChartLine} className="text-green-400" />
               Crecimiento
             </span>
-            <span>{metrics.categoryGrowth}%</span>
+            <span>{overview.categoryGrowth?.toFixed(1) || 0}%</span>
           </div>
         </div>
         <div className="space-y-2">
@@ -44,14 +42,14 @@ export const CategoryPanel = () => {
               <Icon icon={faTags} className="text-blue-400" />
               Categorías
             </span>
-            <span>{metrics.categoriesActive}</span>
+            <span>{overview.categoriesActive || 0}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="flex items-center gap-2">
               <Icon icon={faPercentage} className="text-purple-400" />
               Margen Prom.
             </span>
-            <span>{metrics.avgCategoryMargin}%</span>
+            <span>{overview.avgCategoryMargin?.toFixed(1) || 0}%</span>
           </div>
         </div>
       </div>

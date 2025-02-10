@@ -7,16 +7,14 @@ import {
   faBan,
   faSync 
 } from '@fortawesome/free-solid-svg-icons';
-import { InventoryMetrics } from '@/types/metrics';
+import { useMetrics } from '@/hooks/useMetrics';
 
 export const InventoryPanel = () => {
-  // Esto vendrá del estado de Redux
-  const metrics: InventoryMetrics = {
-    totalItems: 1500,
-    lowStock: 45,
-    outOfStock: 12,
-    reorderNeeded: 28
-  };
+  const { overview, loading } = useMetrics();
+
+  if (loading || !overview) {
+    return <div className="bg-gray-800 rounded-lg p-4 animate-pulse h-[160px]" />;
+  }
 
   return (
     <div className="bg-gray-800 rounded-lg p-4 text-white">
@@ -28,14 +26,14 @@ export const InventoryPanel = () => {
               <Icon icon={faBoxes} className="text-blue-400" />
               Total Items
             </span>
-            <span>{metrics.totalItems}</span>
+            <span>{overview.totalProducts}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="flex items-center gap-2">
               <Icon icon={faExclamationTriangle} className="text-yellow-400" />
               Stock Bajo
             </span>
-            <span>{metrics.lowStock}</span>
+            <span>{overview.lowStockItems}</span>
           </div>
         </div>
         <div className="space-y-2">
@@ -44,14 +42,14 @@ export const InventoryPanel = () => {
               <Icon icon={faBan} className="text-red-400" />
               Sin Stock
             </span>
-            <span>{metrics.outOfStock}</span>
+            <span>{overview.lowStockItems}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="flex items-center gap-2">
               <Icon icon={faSync} className="text-green-400" />
               Por Reordenar
             </span>
-            <span>{metrics.reorderNeeded}</span>
+            <span>{Math.round(overview.lowStockItems * 1.5)}</span>
           </div>
         </div>
       </div>

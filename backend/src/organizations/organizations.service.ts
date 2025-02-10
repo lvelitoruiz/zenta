@@ -1,35 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable, Inject } from '@nestjs/common';
 import { OrganizationDto } from './dto/organization.dto';
-import { Organization } from '@prisma/client';
+import { IRepository } from '../common/interfaces/repository.interface';
 
 @Injectable()
 export class OrganizationsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @Inject('REPOSITORY')
+    private readonly repository: IRepository,
+  ) {}
 
   async findAll(): Promise<OrganizationDto[]> {
-    const organizations =
-      (await this.prisma.organization.findMany()) as Organization[];
-    return organizations.map((org: Organization) => ({
-      id: org.id,
-      name: org.name,
-      createdAt: org.createdAt,
-      updatedAt: org.updatedAt,
-    }));
+    return this.repository.getOrganizations();
   }
 
   async findOne(id: number): Promise<OrganizationDto | null> {
-    const organization = await this.prisma.organization.findUnique({
-      where: { id },
-    });
-
-    return organization
-      ? {
-          id: organization.id,
-          name: organization.name,
-          createdAt: organization.createdAt,
-          updatedAt: organization.updatedAt,
-        }
-      : null;
+    return this.repository.getOrganization(id);
   }
 }

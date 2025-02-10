@@ -1,4 +1,4 @@
-import { IsNumber, IsDate, IsInt, IsOptional } from 'class-validator';
+import { IsNumber, IsDate, IsInt, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class MetricDto {
@@ -49,8 +49,25 @@ export class MetricsOverviewDto {
   @IsInt()
   lowStockItems: number;
 
-  @ApiProperty({ example: 499.99, description: 'Precio promedio' })
+  @ApiProperty({
+    example: 'Electrónicos',
+    description: 'Categoría más vendida',
+  })
+  @IsString()
+  topCategory: string;
+
+  @ApiProperty({
+    example: 23.5,
+    description: 'Crecimiento de la categoría top',
+  })
   @IsNumber()
-  @IsOptional()
-  averagePrice?: number;
+  categoryGrowth: number;
+
+  @ApiProperty({ example: 8, description: 'Número de categorías activas' })
+  @IsInt()
+  categoriesActive: number;
+
+  @ApiProperty({ example: 32.4, description: 'Margen promedio por categoría' })
+  @IsNumber()
+  avgCategoryMargin: number;
 }

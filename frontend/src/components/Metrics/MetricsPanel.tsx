@@ -6,20 +6,20 @@ import { MetricCard } from './MetricCard';
 import { RootState } from '@/store/store';
 import { InventoryPanel } from '../Dashboard/InventoryPanel';
 import { CategoryPanel } from '../Dashboard/CategoryPanel';
+import { useMetrics } from '@/hooks/useMetrics';
+import { Loader } from '../ui/loader';
 
 export const MetricsPanel = () => {
   const { data: metricsData } = useAppSelector((state: RootState) => state.metrics);
-
-  console.log('metricsData: ',metricsData);
+  const { overview, loading } = useMetrics();
   
+  if (loading) return <Loader />;
+  if (!overview) return null;
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <MonthlyInfo 
-          month={metricsData.currentMonth}
-          demand={metricsData.demand}
-          goal={metricsData.goal}
-        />
+        <MonthlyInfo />
         <InventoryPanel />
         <CategoryPanel />
       </div>
@@ -36,13 +36,13 @@ export const MetricsPanel = () => {
         />
         <MetricCard 
           title="Ingresos Totales" 
-          value={metricsData.totalRevenue} 
-          subtitle="Últimos 30 días" 
+          value={`$${overview.totalRevenue.toLocaleString()}`} 
+          subtitle="Total de ingresos" 
         />
         <MetricCard 
           title="Productos Bajos" 
-          value={metricsData.lowStockItems} 
-          subtitle="Stock bajo" 
+          value={overview.lowStockItems.toString()} 
+          subtitle="Productos con stock bajo" 
         />
       </div>
     </div>

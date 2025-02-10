@@ -11,8 +11,6 @@ export class MemorySeedService {
   constructor(public repository: MemoryRepository) {}
 
   async seed() {
-    console.log('Starting seed...');
-
     const organizations: Organization[] = [
       {
         id: 1,
@@ -23,6 +21,12 @@ export class MemorySeedService {
       {
         id: 2,
         name: 'Samsung Store',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 3,
+        name: 'Xiaomi Store',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -62,7 +66,6 @@ export class MemorySeedService {
     });
 
     await this.repository.seedData(organizations, products, metrics);
-    console.log('Seed completed');
   }
 
   getRepository() {

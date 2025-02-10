@@ -12,7 +12,6 @@ body {
   background: rgb(var(--background-rgb));
 }
 
-/* DatePicker dark theme */
 .react-datepicker {
   @apply bg-gray-800 border-gray-700 text-white !important;
 }

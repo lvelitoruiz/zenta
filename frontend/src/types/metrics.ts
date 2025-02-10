@@ -24,7 +24,7 @@ export interface CategoryMetrics {
 
 export interface MetricCardProps {
   title: string;
-  value: number;
+  value: string | number;
   subtitle: string;
 }
 

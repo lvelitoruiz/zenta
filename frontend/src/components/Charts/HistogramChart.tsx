@@ -1,36 +1,79 @@
 'use client';
 import React from 'react';
 import dynamic from 'next/dynamic';
+import { useOrganizationStore } from '@/store/organizationStore';
+import { useState, useEffect } from 'react';
 
 const Plot = dynamic(() => import('react-plotly.js'), {
   ssr: false,
   loading: () => <div className="h-[300px] bg-gray-800 rounded-lg animate-pulse" />
 });
 
+interface Product {
+  id: number;
+  price: number;
+}
+
 export const HistogramChart = () => {
+  const { selectedOrganizationId } = useOrganizationStore();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!selectedOrganizationId) return;
+
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/products?organizationId=${selectedOrganizationId}&page=1&limit=100`
+        );
+        const { items } = await response.json();
+        setProducts(items);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [selectedOrganizationId]);
+
+  if (loading || !products.length) {
+    return <div className="h-[300px] bg-gray-800 rounded-lg animate-pulse" />;
+  }
+
   const data: Plotly.Data[] = [
     {
-      type: 'histogram' as const,
-      x: [1, 2, 2, 3, 3, 3, 4, 4, 5],
-      name: 'PV',
-      opacity: 0.75,
+      x: products.map(product => product.price),
+      type: 'histogram',
+      name: 'Distribución de Precios',
+      marker: {
+        color: '#60a5fa',
+      },
+      xbins: {
+        start: Math.min(...products.map(p => p.price)),
+        end: Math.max(...products.map(p => p.price)),
+        size: (Math.max(...products.map(p => p.price)) - Math.min(...products.map(p => p.price))) / 20
+      },
     },
-    {
-      type: 'histogram' as const,
-      x: [2, 3, 3, 4, 4, 4, 5, 5, 6],
-      name: 'OUT',
-      opacity: 0.75,
-    }
   ];
 
   const layout: Partial<Plotly.Layout> = {
-    title: 'Histograma y densidad',
-    barmode: 'overlay' as const,
+    title: 'Distribución de Precios',
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
     font: { color: '#fff' },
-    xaxis: { gridcolor: '#444' },
-    yaxis: { gridcolor: '#444' },
+    xaxis: { 
+      gridcolor: '#444',
+      title: 'Precio ($)',
+    },
+    yaxis: { 
+      gridcolor: '#444',
+      title: 'Frecuencia',
+    },
+    bargap: 0.05,
   };
 
   return (

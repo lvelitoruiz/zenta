@@ -3,7 +3,6 @@ import React from "react";
 import { MetricsPanel } from "@/components/Metrics/MetricsPanel";
 import { ChartsContainer } from "@/components/Charts/ChartsContainer";
 import { ProductsTable } from "@/components/Table/ProductsTable";
-// import { FormExamples } from "@/components/Examples/FormExamples";
 
 export default function Home() {
   return (
@@ -13,9 +12,6 @@ export default function Home() {
         <div className="mt-4">
           <ChartsContainer />
         </div>
-        {/* <div className="mb-6">
-          <FormExamples />
-        </div> */}
         <ProductsTable />
       </div>
     </main>
