@@ -258,103 +258,105 @@ export const ProductsTable = () => {
             />
           </div>
 
-          <div className="bg-gray-800 rounded-lg p-4">
-            <table className="min-w-full">
-              <thead>
-                {table.getHeaderGroups().map(headerGroup => (
-                  <tr key={headerGroup.id} className="border-b border-gray-700">
-                    {headerGroup.headers.map(header => (
-                      <th
-                        key={header.id}
-                        className="px-6 py-3 text-left text-sm font-semibold text-gray-300 cursor-pointer hover:bg-gray-700/50"
-                        onClick={header.column.getToggleSortingHandler()}
-                      >
-                        <div className="flex items-center gap-2">
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          <Icon 
-                            icon={
-                              header.column.getIsSorted() === 'asc' 
-                                ? faSortUp 
-                                : header.column.getIsSorted() === 'desc'
-                                ? faSortDown
-                                : faSort
-                            }
-                            className={cn(
-                              "transition-colors",
-                              header.column.getIsSorted()
-                                ? "text-blue-400"
-                                : "text-gray-400"
+          <div className="bg-gray-800 rounded-lg p-4 overflow-x-auto">
+            <div className="min-w-[640px]">
+              <table className="min-w-full">
+                <thead>
+                  {table.getHeaderGroups().map(headerGroup => (
+                    <tr key={headerGroup.id} className="border-b border-gray-700">
+                      {headerGroup.headers.map(header => (
+                        <th
+                          key={header.id}
+                          className="px-6 py-3 text-left text-sm font-semibold text-gray-300 cursor-pointer hover:bg-gray-700/50"
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          <div className="flex items-center gap-2">
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
                             )}
-                            size="sm"
-                          />
-                        </div>
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody>
-                {table.getRowModel().rows.map(row => (
-                  <tr
-                    key={row.id}
-                    className="border-b border-gray-700 hover:bg-gray-700/50 cursor-pointer"
-                    onClick={() => setSelectedProduct(row.original)}
-                  >
-                    {row.getVisibleCells().map(cell => (
-                      <td
-                        key={cell.id}
-                        className="px-6 py-4 text-sm text-gray-300"
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            <div className="mt-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <select
-                  value={pageSize}
-                  onChange={e => setPageSize(Number(e.target.value))}
-                  className="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2"
-                >
-                  {[10, 20, 30, 40, 50].map(size => (
-                    <option key={size} value={size}>
-                      {size} por página
-                    </option>
+                            <Icon 
+                              icon={
+                                header.column.getIsSorted() === 'asc' 
+                                  ? faSortUp 
+                                  : header.column.getIsSorted() === 'desc'
+                                  ? faSortDown
+                                  : faSort
+                              }
+                              className={cn(
+                                "transition-colors",
+                                header.column.getIsSorted()
+                                  ? "text-blue-400"
+                                  : "text-gray-400"
+                              )}
+                              size="sm"
+                            />
+                          </div>
+                        </th>
+                      ))}
+                    </tr>
                   ))}
-                </select>
-                <span className="text-sm text-gray-400">
-                  Página {table.getState().pagination.pageIndex + 1} de{' '}
-                  {table.getPageCount()}
-                </span>
-              </div>
-              
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  icon={faChevronLeft}
-                  onClick={() => table.previousPage()}
-                  disabled={!table.getCanPreviousPage()}
-                >
-                  Anterior
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  icon={faChevronRight}
-                  iconPosition="right"
-                  onClick={() => table.nextPage()}
-                  disabled={!table.getCanNextPage()}
-                >
-                  Siguiente
-                </Button>
+                </thead>
+                <tbody>
+                  {table.getRowModel().rows.map(row => (
+                    <tr
+                      key={row.id}
+                      className="border-b border-gray-700 hover:bg-gray-700/50 cursor-pointer"
+                      onClick={() => setSelectedProduct(row.original)}
+                    >
+                      {row.getVisibleCells().map(cell => (
+                        <td
+                          key={cell.id}
+                          className="px-6 py-4 text-sm text-gray-300"
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              <div className="mt-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <select
+                    value={pageSize}
+                    onChange={e => setPageSize(Number(e.target.value))}
+                    className="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2"
+                  >
+                    {[10, 20, 30, 40, 50].map(size => (
+                      <option key={size} value={size}>
+                        {size} por página
+                      </option>
+                    ))}
+                  </select>
+                  <span className="text-sm text-gray-400">
+                    Página {table.getState().pagination.pageIndex + 1} de{' '}
+                    {table.getPageCount()}
+                  </span>
+                </div>
+                
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    icon={faChevronLeft}
+                    onClick={() => table.previousPage()}
+                    disabled={!table.getCanPreviousPage()}
+                  >
+                    Anterior
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    icon={faChevronRight}
+                    iconPosition="right"
+                    onClick={() => table.nextPage()}
+                    disabled={!table.getCanNextPage()}
+                  >
+                    Siguiente
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
