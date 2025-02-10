@@ -1,48 +1,43 @@
 'use client';
-import { useEffect } from 'react';
+import React from 'react';
+import { useOrganizations } from '@/hooks/useOrganizations';
 import { useOrganizationStore } from '@/store/organizationStore';
+import { ErrorState } from '../ui/error-state';
+import { Loader } from '../ui/loader';
 
 export const Header = () => {
-  const { 
-    organizations, 
-    selectedOrganizationId, 
-    setOrganizations, 
-    setSelectedOrganizationId 
-  } = useOrganizationStore();
+  const { organizations, loading, error } = useOrganizations();
+  const { selectedOrganizationId, setSelectedOrganizationId } = useOrganizationStore();
 
-  useEffect(() => {
-    const fetchOrganizations = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/organizations`);
-        const data = await response.json();
-        setOrganizations(data);
-        if (!selectedOrganizationId && data.length > 0) {
-          setSelectedOrganizationId(data[0].id);
-        }
-      } catch (error) {
-        console.error('Error fetching organizations:', error);
-      }
-    };
-
-    fetchOrganizations();
-  }, []);
+  if (error) {
+    return (
+      <header className="bg-gray-900 text-white p-4">
+        <ErrorState message={error} />
+      </header>
+    );
+  }
 
   return (
-    <header className="w-full bg-gray-950 border-b border-gray-800 mb-6 z-10">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="text-2xl font-bold text-white">ZENTA</div>
-        <select 
-          className="bg-gray-800 text-white border border-gray-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          value={selectedOrganizationId || ''}
-          onChange={(e) => setSelectedOrganizationId(Number(e.target.value))}
-        >
-          <option value="">Selecciona una compañía</option>
-          {organizations.map((org) => (
-            <option key={org.id} value={org.id}>
-              {org.name}
-            </option>
-          ))}
-        </select>
+    <header className="bg-gray-900 text-white p-4">
+      <div className="container mx-auto flex justify-between items-center">
+        <h1 className="text-xl font-bold">Dashboard</h1>
+        <div className="flex items-center gap-4">
+          {loading ? (
+            <Loader />
+          ) : (
+            <select
+              className="bg-gray-800 text-white px-3 py-2 rounded-lg"
+              value={selectedOrganizationId || ''}
+              onChange={(e) => setSelectedOrganizationId(Number(e.target.value))}
+            >
+              {organizations.map((org) => (
+                <option key={org.id} value={org.id}>
+                  {org.name}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
       </div>
     </header>
   );

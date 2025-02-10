@@ -27,16 +27,22 @@ export const useMetrics = () => {
   const [overview, setOverview] = useState<MetricsOverview | null>(null);
   const [trends, setTrends] = useState<MetricsTrends | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchMetrics = useCallback(async () => {
     if (!selectedOrganizationId) return;
 
     setLoading(true);
+    setError(null);
     try {
       const [overviewResponse, trendsResponse] = await Promise.all([
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/metrics/overview?organizationId=${selectedOrganizationId}`),
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/metrics/trends?organizationId=${selectedOrganizationId}`)
       ]);
+
+      if (!overviewResponse.ok || !trendsResponse.ok) {
+        throw new Error('Error al obtener las métricas');
+      }
 
       const overviewData = await overviewResponse.json();
       const trendsData = await trendsResponse.json();
@@ -45,6 +51,7 @@ export const useMetrics = () => {
       setTrends(trendsData);
     } catch (error) {
       console.error('Error fetching metrics:', error);
+      setError('Error al cargar las métricas');
     } finally {
       setLoading(false);
     }
@@ -54,5 +61,5 @@ export const useMetrics = () => {
     fetchMetrics();
   }, [fetchMetrics]);
 
-  return { overview, trends, loading };
+  return { overview, trends, loading, error };
 }; 

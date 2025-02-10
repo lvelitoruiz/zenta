@@ -2,6 +2,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import { useMetrics } from '@/hooks/useMetrics';
+import { ErrorState } from '../ui/error-state';
 
 const Plot = dynamic(() => import('react-plotly.js'), {
   ssr: false,
@@ -9,7 +10,11 @@ const Plot = dynamic(() => import('react-plotly.js'), {
 });
 
 export const LineChart = () => {
-  const { trends, loading } = useMetrics();
+  const { trends, loading, error } = useMetrics();
+
+  if (error) {
+    return <ErrorState message={error} />;
+  }
 
   if (loading || !trends) {
     return <div className="h-[300px] bg-gray-800 rounded-lg animate-pulse" />;

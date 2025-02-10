@@ -1,9 +1,15 @@
 'use client';
 import React from 'react';
 import { useMetrics } from '@/hooks/useMetrics';
+import { TableTitle } from '../ui/table-title';
+import { ErrorState } from '../ui/error-state';
 
 export const MonthlyInfo = () => {
-  const { trends, loading } = useMetrics();
+  const { trends, loading, error } = useMetrics();
+
+  if (error) {
+    return <ErrorState message={error} />;
+  }
 
   if (loading || !trends) {
     return <div className="bg-gray-800 rounded-lg p-4 animate-pulse h-[160px]" />;
@@ -16,7 +22,7 @@ export const MonthlyInfo = () => {
 
   return (
     <div className="bg-gray-800 rounded-lg p-4 text-white">
-      <h2 className="text-lg font-semibold mb-4">Información Mensual</h2>
+      <TableTitle title="Información Mensual" />
       <div className="space-y-2">
         <div className="flex justify-between">
           <span>Mes</span>

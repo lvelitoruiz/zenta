@@ -8,9 +8,15 @@ import {
   faSync 
 } from '@fortawesome/free-solid-svg-icons';
 import { useMetrics } from '@/hooks/useMetrics';
+import { TableTitle } from '../ui/table-title';
+import { ErrorState } from '../ui/error-state';
 
 export const InventoryPanel = () => {
-  const { overview, loading } = useMetrics();
+  const { overview, loading, error } = useMetrics();
+
+  if (error) {
+    return <ErrorState message={error} />;
+  }
 
   if (loading || !overview) {
     return <div className="bg-gray-800 rounded-lg p-4 animate-pulse h-[160px]" />;
@@ -18,7 +24,7 @@ export const InventoryPanel = () => {
 
   return (
     <div className="bg-gray-800 rounded-lg p-4 text-white">
-      <h2 className="text-lg font-semibold mb-4">Estado del Inventario</h2>
+      <TableTitle title="Estado del Inventario" />
       <div className="grid grid-cols-2 gap-10">
         <div className="space-y-2">
           <div className="flex justify-between items-center">

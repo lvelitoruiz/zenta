@@ -1,99 +1,124 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Backend Dashboard
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este es el backend para la aplicación de dashboard, construido con NestJS.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Requisitos Previos
 
-## Description
+- Node.js (v18 o superior)
+- Docker y Docker Compose (solo para almacenamiento con Prisma)
+- npm o yarn
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Configuración Inicial
 
-## Project setup
-
+1. Instalar dependencias:
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
-
+2. Copiar el archivo de variables de entorno:
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+cp .env.example .env
 ```
 
-## Run tests
+## Tipos de Almacenamiento
 
-```bash
-# unit tests
-$ npm run test
+El backend puede funcionar con dos tipos de almacenamiento, configurables mediante la variable `STORAGE_TYPE` en el archivo `.env`:
 
-# e2e tests
-$ npm run test:e2e
+### 1. Almacenamiento en Memoria (memory)
+```env
+STORAGE_TYPE=memory
+```
+- Los datos se almacenan en memoria
+- Se reinician al reiniciar el servidor
+- No requiere base de datos
+- Ideal para desarrollo y pruebas rápidas
 
-# test coverage
-$ npm run test:cov
+### 2. Almacenamiento con Prisma (PostgreSQL)
+```env
+STORAGE_TYPE=prisma
+```
+- Requiere PostgreSQL
+- Persistencia de datos
+- Requiere Docker o PostgreSQL local
+- Recomendado para producción
+
+## Ejecutar la Aplicación
+
+1. Configurar el tipo de almacenamiento en `.env`:
+```env
+STORAGE_TYPE=memory  # o prisma
 ```
 
-## Deployment
+2. Si usas Prisma:
+   - Iniciar Docker:
+   ```bash
+   docker-compose up -d
+   ```
+   - Ejecutar migraciones:
+   ```bash
+   npx prisma migrate dev
+   ```
+   - Cargar datos iniciales (opcional):
+   ```bash
+   npm run seed
+   ```
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+3. Iniciar el servidor:
 ```bash
-$ npm install -g mau
-$ mau deploy
+npm run start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+La aplicación estará disponible en http://localhost:3001
 
-## Resources
+## Variables de Entorno
 
-Check out a few resources that may come in handy when working with NestJS:
+```env
+PORT=3001              # Puerto del servidor
+NODE_ENV=development   # Entorno (development/production)
+STORAGE_TYPE=memory    # Tipo de almacenamiento (memory/prisma)
+DATABASE_URL          # URL de PostgreSQL (solo necesario si STORAGE_TYPE=prisma)
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Documentación API (Swagger)
 
-## Support
+La documentación de la API está disponible en:
+- http://localhost:3001/api
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Scripts Disponibles
 
-## Stay in touch
+```bash
+# Desarrollo
+npm run start:dev    # Inicia el servidor en modo desarrollo
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Producción
+npm run start:prod   # Inicia el servidor en modo producción
 
-## License
+# Base de datos (solo con STORAGE_TYPE=prisma)
+npm run seed         # Carga datos iniciales en la base de datos
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# Tests
+npm run test        # Ejecuta tests unitarios
+npm run test:e2e    # Ejecuta tests end-to-end
+```
+
+## Estructura del Proyecto
+
+```
+backend/
+├── src/
+│   ├── main.ts              # Punto de entrada
+│   ├── app.module.ts        # Módulo principal
+│   ├── products/           # Módulo de productos
+│   ├── metrics/           # Módulo de métricas
+│   └── organizations/     # Módulo de organizaciones
+├── prisma/                # Configuración PostgreSQL
+└── test/                 # Tests
+```
+
+## Endpoints Principales
+
+- `GET /products`: Lista de productos
+- `GET /metrics/overview`: Resumen de métricas
+- `GET /organizations`: Lista de organizaciones
+
+Para ver todos los endpoints disponibles, consulta la documentación Swagger en `/api`.

@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend Dashboard
 
-## Getting Started
+Este es el frontend para la aplicación de dashboard, construido con Next.js 14 y TypeScript.
 
-First, run the development server:
+## Requisitos Previos
+
+- Node.js (v18 o superior)
+- npm o yarn
+- Backend corriendo en localhost:3001
+
+## Configuración Inicial
+
+1. Instalar dependencias:
+```bash
+npm install
+```
+
+2. Copiar el archivo de variables de entorno:
+```bash
+cp .env.example .env.local
+```
+
+3. Configurar las variables de entorno:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3001
+```
+
+## Ejecutar la Aplicación
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+La aplicación estará disponible en http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts Disponibles
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Desarrollo
+npm run dev       # Inicia el servidor de desarrollo
 
-## Learn More
+# Producción
+npm run build    # Construye la aplicación
+npm run start    # Inicia el servidor de producción
 
-To learn more about Next.js, take a look at the following resources:
+# Linting y Formato
+npm run lint     # Ejecuta el linter
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Estructura del Proyecto
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+frontend/
+├── src/
+│   ├── app/              # Páginas y layouts
+│   │   ├── Charts/      # Gráficos
+│   │   ├── Dashboard/   # Componentes del dashboard
+│   │   ├── Layout/      # Componentes de layout
+│   │   ├── Metrics/     # Componentes de métricas
+│   │   ├── Table/       # Componentes de tabla
+│   │   └── ui/          # Componentes UI reutilizables
+│   ├── hooks/           # Custom hooks
+│   ├── lib/             # Utilidades y configuraciones
+│   ├── store/           # Estado global (Redux)
+│   └── types/           # Tipos TypeScript
+├── public/              # Archivos estáticos
+└── tailwind.config.js   # Configuración de Tailwind CSS
+```
 
-## Deploy on Vercel
+## Tecnologías Principales
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Next.js 14
+- TypeScript
+- Tailwind CSS
+- Redux Toolkit
+- React Query
+- Chart.js
+- FontAwesome
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Características
+
+- Dashboard interactivo
+- Gráficos y métricas en tiempo real
+- Tabla de productos con ordenamiento y filtros
+- Diseño responsive
+- Manejo de estados de carga y error
+- Temas oscuros
+- Selección de organización
+
+## Desarrollo
+
+- Los componentes están organizados por funcionalidad
+- Se utiliza el patrón de diseño atómico
+- Implementación de error boundaries
+- Custom hooks para lógica reutilizable
+- Estado global con Redux Toolkit
+- Estilos con Tailwind CSS
+
+## Notas
+
+- Asegúrate de que el backend esté corriendo antes de iniciar el frontend
+- La aplicación requiere una conexión activa al backend para funcionar
+- Los cambios en el código se reflejan automáticamente en el navegador

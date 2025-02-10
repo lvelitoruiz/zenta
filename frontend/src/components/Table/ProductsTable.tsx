@@ -15,7 +15,6 @@ import { Button } from '@/components/ui/button';
 import { ExportButton } from '@/components/ui/export-button';
 import { Icon } from '@/components/ui/icon';
 import { 
-  faFilter, 
   faSortUp,
   faSortDown,
   faSort,
@@ -28,6 +27,7 @@ import { cn } from '@/lib/utils';
 import { Loader } from '@/components/ui/loader';
 import { Modal } from '@/components/ui/modal';
 import Swal from 'sweetalert2';
+import { ErrorState } from '@/components/ui/error-state';
 
 const columnHelper = createColumnHelper<Product>();
 
@@ -41,6 +41,7 @@ export const ProductsTable = () => {
   const [totalRows, setTotalRows] = React.useState(0);
   const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(null);
   const [isEditing, setIsEditing] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   const handleEdit = (product: Product) => {
     setSelectedProduct(product);
@@ -143,16 +144,23 @@ export const ProductsTable = () => {
     if (!selectedOrganizationId) return;
     
     setLoading(true);
+    setError(null);
     try {
       const page = pageIndex + 1;
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/products?organizationId=${selectedOrganizationId}&page=${page}&limit=${pageSize}`
       );
+      
+      if (!response.ok) {
+        throw new Error('Error al obtener los productos');
+      }
+      
       const { items, total } = await response.json();
       setData(items);
       setTotalRows(total);
     } catch (error) {
       console.error('Error fetching products:', error);
+      setError('Error al cargar los productos');
     } finally {
       setLoading(false);
     }
@@ -236,6 +244,10 @@ export const ProductsTable = () => {
     }
   };
 
+  if (error) {
+    return <ErrorState message={error} />;
+  }
+
   return (
     <div className="relative">
       {loading && (
@@ -246,11 +258,9 @@ export const ProductsTable = () => {
       
       <div className={loading ? 'opacity-50' : ''}>
         <div className="space-y-4">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center pb-3 py-3 border-b border-gray-700 border-t">
             <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm" icon={faFilter}>
-                Filtros
-              </Button>
+              <h2 className='text-lg font-semibold'>Productos</h2>
             </div>
             <ExportButton 
               data={data}

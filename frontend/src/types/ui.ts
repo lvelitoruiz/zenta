@@ -3,7 +3,7 @@ import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 export interface IconProps {
   icon: IconDefinition;
   className?: string;
-  size?: 'xs' | 'sm' | 'lg' | '2x';
+  size?: 'xs' | 'sm' | 'lg' | '1x' | '2x';
 }
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

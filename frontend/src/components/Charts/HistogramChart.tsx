@@ -3,6 +3,7 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import { useOrganizationStore } from '@/store/organizationStore';
 import { useState, useEffect } from 'react';
+import { ErrorState } from '../ui/error-state';
 
 const Plot = dynamic(() => import('react-plotly.js'), {
   ssr: false,
@@ -18,20 +19,28 @@ export const HistogramChart = () => {
   const { selectedOrganizationId } = useOrganizationStore();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
       if (!selectedOrganizationId) return;
 
       setLoading(true);
+      setError(null);
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/products?organizationId=${selectedOrganizationId}&page=1&limit=100`
         );
+
+        if (!response.ok) {
+          throw new Error('Error al obtener los productos');
+        }
+
         const { items } = await response.json();
         setProducts(items);
       } catch (error) {
         console.error('Error fetching products:', error);
+        setError('Error al cargar los productos');
       } finally {
         setLoading(false);
       }
@@ -39,6 +48,10 @@ export const HistogramChart = () => {
 
     fetchProducts();
   }, [selectedOrganizationId]);
+
+  if (error) {
+    return <ErrorState message={error} />;
+  }
 
   if (loading || !products.length) {
     return <div className="h-[300px] bg-gray-800 rounded-lg animate-pulse" />;
